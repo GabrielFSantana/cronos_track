@@ -145,12 +145,20 @@ $temFiltros = $filtros['de'] || $filtros['ate'] || $filtros['projeto_id'];
       </section>
     <?php else : ?>
       <section class="grid gap-5 lg:grid-cols-12">
-        <article class="glass rounded-[28px] p-6 sm:p-7 lg:col-span-7">
+        <article class="glass rounded-[28px] p-6 sm:p-7 lg:col-span-6">
           <div class="mb-7 flex items-center justify-between">
-            <div><span class="eyebrow text-[9px] font-bold text-lime">Distribuição</span><h2 class="mt-1 font-display text-xl font-bold tracking-[-.035em] text-white">Apps e domínios</h2></div>
-            <span class="rounded-full bg-white/[.05] px-3 py-1.5 text-[10px] font-bold text-slate-500">TOP <?= min(count($report['por_app']), 8) ?></span>
+            <div><span class="eyebrow text-[9px] font-bold text-lime">Navegador</span><h2 class="mt-1 font-display text-xl font-bold tracking-[-.035em] text-white">Sites</h2></div>
+            <span class="rounded-full bg-white/[.05] px-3 py-1.5 text-[10px] font-bold text-slate-500">TOP <?= min(count($report['por_site']), 8) ?></span>
           </div>
-          <div class="h-[330px]"><canvas id="chart-app"></canvas></div>
+          <div class="h-[280px]"><canvas id="chart-site"></canvas></div>
+        </article>
+
+        <article class="glass rounded-[28px] p-6 sm:p-7 lg:col-span-6">
+          <div class="mb-7 flex items-center justify-between">
+            <div><span class="eyebrow text-[9px] font-bold text-violet">Aplicativos</span><h2 class="mt-1 font-display text-xl font-bold tracking-[-.035em] text-white">Softwares</h2></div>
+            <span class="rounded-full bg-white/[.05] px-3 py-1.5 text-[10px] font-bold text-slate-500">TOP <?= min(count($report['por_software']), 8) ?></span>
+          </div>
+          <div class="h-[280px]"><canvas id="chart-software"></canvas></div>
         </article>
 
         <article class="glass rounded-[28px] p-6 sm:p-7 lg:col-span-5">
@@ -158,9 +166,9 @@ $temFiltros = $filtros['de'] || $filtros['ate'] || $filtros['projeto_id'];
           <div class="h-[330px]"><canvas id="chart-projeto"></canvas></div>
         </article>
 
-        <article class="glass rounded-[28px] p-6 sm:p-7 lg:col-span-12">
+        <article class="glass rounded-[28px] p-6 sm:p-7 lg:col-span-7">
           <div class="mb-7 flex items-end justify-between"><div><span class="eyebrow text-[9px] font-bold text-coral">Ritmo</span><h2 class="mt-1 font-display text-xl font-bold tracking-[-.035em] text-white">Evolução diária</h2></div><span class="hidden text-xs text-slate-600 sm:block">horas registradas por dia</span></div>
-          <div class="h-[290px]"><canvas id="chart-dia"></canvas></div>
+          <div class="h-[330px]"><canvas id="chart-dia"></canvas></div>
         </article>
       </section>
     <?php endif; ?>
@@ -168,7 +176,8 @@ $temFiltros = $filtros['de'] || $filtros['ate'] || $filtros['projeto_id'];
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script>
-    const porApp = <?= json_encode($report['por_app'], $jsonFlags) ?>;
+    const porSite = <?= json_encode($report['por_site'], $jsonFlags) ?>;
+    const porSoftware = <?= json_encode($report['por_software'], $jsonFlags) ?>;
     const porProjeto = <?= json_encode($report['por_projeto'], $jsonFlags) ?>;
     const porDia = <?= json_encode($report['por_dia'], $jsonFlags) ?>;
     const paleta = ['#c6ff4a', '#8b7cff', '#ff7163', '#50d5ff', '#ffcd58', '#ef7dff', '#5ce1a9', '#ff9f6e'];
@@ -184,12 +193,19 @@ $temFiltros = $filtros['de'] || $filtros['ate'] || $filtros['projeto_id'];
     Chart.defaults.borderColor = 'rgba(255,255,255,.055)';
     Chart.defaults.font.family = "'DM Sans', ui-sans-serif, system-ui";
 
-    document.fonts.ready.then(() => {
-      if (porApp.length) new Chart(document.getElementById('chart-app'), {
+    const renderBarChart = (canvasId, dados, corDestaque) => {
+      const top = dados.slice(0, 8);
+      if (!top.length) return;
+      new Chart(document.getElementById(canvasId), {
         type: 'bar',
-        data: { labels: porApp.slice(0, 8).map(r => r.app_ou_dominio), datasets: [{ data: porApp.slice(0, 8).map(r => horas(r.duracao_seg)), backgroundColor: porApp.slice(0, 8).map((_, i) => i === 0 ? '#c6ff4a' : 'rgba(255,255,255,.1)'), borderRadius: 8, borderSkipped: false, barThickness: 13 }] },
-        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, tooltip }, scales: { x: { beginAtZero: true, ticks: { padding: 8 }, grid: { drawBorder: false } }, y: { grid: { display: false }, ticks: { color: '#cbd5e1', callback: (_v, i) => truncar(porApp[i].app_ou_dominio) } } } },
+        data: { labels: top.map(r => r.app_ou_dominio), datasets: [{ data: top.map(r => horas(r.duracao_seg)), backgroundColor: top.map((_, i) => i === 0 ? corDestaque : 'rgba(255,255,255,.1)'), borderRadius: 8, borderSkipped: false, barThickness: 13 }] },
+        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, tooltip }, scales: { x: { beginAtZero: true, ticks: { padding: 8 }, grid: { drawBorder: false } }, y: { grid: { display: false }, ticks: { color: '#cbd5e1', callback: (_v, i) => truncar(top[i].app_ou_dominio) } } } },
       });
+    };
+
+    document.fonts.ready.then(() => {
+      renderBarChart('chart-site', porSite, '#c6ff4a');
+      renderBarChart('chart-software', porSoftware, '#8b7cff');
 
       if (porProjeto.length) new Chart(document.getElementById('chart-projeto'), {
         type: 'doughnut',

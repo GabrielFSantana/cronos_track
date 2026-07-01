@@ -40,6 +40,24 @@ class ReportService
             ->get()
             ->getResultArray();
 
+        $porSite = $applyFilters($db->table('activities'))
+            ->select('app_ou_dominio')
+            ->selectSum('duracao_seg')
+            ->where('origem', 'navegador')
+            ->groupBy('app_ou_dominio')
+            ->orderBy('duracao_seg', 'DESC')
+            ->get()
+            ->getResultArray();
+
+        $porSoftware = $applyFilters($db->table('activities'))
+            ->select('app_ou_dominio')
+            ->selectSum('duracao_seg')
+            ->where('origem', 'app')
+            ->groupBy('app_ou_dominio')
+            ->orderBy('duracao_seg', 'DESC')
+            ->get()
+            ->getResultArray();
+
         $porProjeto = $applyFilters($db->table('activities a'))
             ->select('a.projeto_id, p.nome, p.cor')
             ->selectSum('a.duracao_seg', 'duracao_seg')
@@ -58,10 +76,12 @@ class ReportService
             ->getResultArray();
 
         return [
-            'total_seg'   => (int) ($totalRow['duracao_seg'] ?? 0),
-            'por_app'     => $this->castDuracao($porApp),
-            'por_projeto' => $this->castDuracao($porProjeto),
-            'por_dia'     => $this->castDuracao($porDia),
+            'total_seg'    => (int) ($totalRow['duracao_seg'] ?? 0),
+            'por_app'      => $this->castDuracao($porApp),
+            'por_site'     => $this->castDuracao($porSite),
+            'por_software' => $this->castDuracao($porSoftware),
+            'por_projeto'  => $this->castDuracao($porProjeto),
+            'por_dia'      => $this->castDuracao($porDia),
         ];
     }
 
