@@ -77,8 +77,8 @@ async function closeCurrentSession(fimDate) {
   await setCurrent(null);
 }
 
-async function startSession(value, titulo) {
-  await setCurrent({ value, titulo: titulo || null, inicioIso: new Date().toISOString() });
+async function startSession(value, titulo, tabId) {
+  await setCurrent({ value, titulo: titulo || null, tabId, inicioIso: new Date().toISOString() });
 }
 
 async function handleTab(tab) {
@@ -93,18 +93,18 @@ async function handleTab(tab) {
   const current = await getCurrent();
 
   if (!current) {
-    await startSession(value, tab.title);
+    await startSession(value, tab.title, tab.id);
     return;
   }
 
   if (current.value !== value) {
     await closeCurrentSession();
-    await startSession(value, tab.title);
+    await startSession(value, tab.title, tab.id);
     return;
   }
 
-  // Mesma aba/domínio ainda ativa: só atualiza o título mais recente.
-  await setCurrent({ ...current, titulo: tab.title || current.titulo });
+  // Mesma aba/domínio ainda ativa: só atualiza o título e a aba mais recente.
+  await setCurrent({ ...current, titulo: tab.title || current.titulo, tabId: tab.id });
 }
 
 async function handleActiveTabInWindow(windowId) {
@@ -156,10 +156,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    // Nenhuma janela em foco (ex.: navegador inteiro fechado): aplica na hora.
     await closeCurrentSession();
+    await flushPending();
     return;
   }
   await handleActiveTabInWindow(windowId);
+});
+
+chrome.tabs.onRemoved.addListener(async (tabId) => {
+  const current = await getCurrent();
+  if (!current || current.tabId !== tabId) return;
+
+  // A aba rastreada foi fechada: encerra a sessão e envia pra API na hora,
+  // sem esperar o próximo alarme (até 1 min de atraso).
+  await closeCurrentSession();
+  await flushPending();
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
