@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>TimeTracker</title>
+  <style>
+    body { font-family: system-ui, sans-serif; width: 280px; padding: 12px; }
+    h3 { margin: 0 0 4px; }
+    label { display: block; margin-top: 8px; font-size: 12px; color: #444; }
+    input[type="text"], input[type="password"] { width: 100%; box-sizing: border-box; padding: 4px; margin-top: 2px; }
+    .checkbox-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+    .checkbox-row label { margin: 0; }
+    button { margin-top: 12px; width: 100%; padding: 6px; cursor: pointer; }
+    #status { margin-top: 12px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 8px; }
+    #saved { color: green; font-size: 12px; display: none; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h3>TimeTracker</h3>
+
+  <label for="apiBaseUrl">URL da API</label>
+  <input type="text" id="apiBaseUrl" placeholder="http://127.0.0.1:8080" />
+
+  <label for="apiKey">API Key</label>
+  <input type="password" id="apiKey" placeholder="X-API-Key" />
+
+  <div class="checkbox-row">
+    <input type="checkbox" id="captureFullUrl" />
+    <label for="captureFullUrl">Capturar URL completa (padrão: só domínio)</label>
+  </div>
+
+  <button id="save">Salvar</button>
+  <div id="saved">Salvo!</div>
+
+  <div id="status">Carregando status...</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

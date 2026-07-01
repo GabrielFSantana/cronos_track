@@ -1,0 +1,11 @@
+# Configuração local do Claude Code (contém permissões e dados específicos desta máquina)
+.claude/
+
+# IDEs
+.vscode/
+.idea/
+
+# SO
+.DS_Store
+Thumbs.db
+Desktop.ini

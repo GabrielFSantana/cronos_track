@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "TimeTracker - Captura de Navegador",
+  "version": "1.0.0",
+  "description": "Captura tempo de uso por aba/domínio e envia para a API do TimeTracker.",
+  "permissions": ["tabs", "storage", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "TimeTracker"
+  }
+}
