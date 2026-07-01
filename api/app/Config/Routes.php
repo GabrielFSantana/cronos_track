@@ -8,6 +8,9 @@ $routes->get('/', 'DashboardController::index');
 $routes->get('lancamento', 'ManualEntryController::create', ['filter' => 'csrf']);
 $routes->post('lancamento', 'ManualEntryController::store', ['filter' => 'csrf']);
 
+$routes->get('projetos', 'ProjetosPageController::index', ['filter' => 'csrf']);
+$routes->post('projetos', 'ProjetosPageController::store', ['filter' => 'csrf']);
+
 $routes->group('api', ['filter' => 'apikey'], static function (RouteCollection $routes) {
     $routes->post('activities', 'Api\ActivitiesController::create');
     $routes->post('manual', 'Api\ManualController::create');

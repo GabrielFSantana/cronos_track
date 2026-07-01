@@ -24,6 +24,13 @@
         </svg>
         <span class="hidden sm:inline">Novo registro</span>
       </a>
+      <a href="<?= site_url('projetos') ?>"
+         class="flex items-center gap-2 rounded-xl px-3 py-2 transition sm:px-4 <?= $active === 'projetos' ? 'bg-white/[.1] text-white shadow-sm' : 'text-slate-500 hover:bg-white/[.05] hover:text-slate-200' ?>">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+        </svg>
+        <span class="hidden sm:inline">Projetos</span>
+      </a>
     </nav>
   </div>
 </header>
