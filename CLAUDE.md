@@ -49,7 +49,8 @@ All commands below assume you're in the relevant subdirectory.
 - `composer install` — install CodeIgniter 4 and dependencies (run once, or after `composer.json` changes)
 - `php spark serve` — start the dev server (default `http://localhost:8080`)
 - `cp env .env` — create local env config (see `readme.md` for which values to fill in)
-- `vendor/bin/phpunit` — run tests (none written yet, but the harness is configured)
+- `vendor/bin/phpunit` — run tests (only CodeIgniter's default scaffold tests exist under `tests/`, e.g. `tests/unit/HealthTest.php`; no project-specific tests written yet)
+- `vendor/bin/phpunit tests/unit/HealthTest.php` — run a single test file; add `--filter testMethodName` to run one test method
 
 **Agent (`agent/`)** — Windows only
 - `python -m venv .venv && .venv\Scripts\pip install -r requirements.txt` — setup
